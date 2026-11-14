@@ -16,6 +16,16 @@ public class Main {
 
     public static void main(String[] args) {
 
+        AhoCorasick example = new AhoCorasick();
+
+        example.addPattern("aba");
+        example.addPattern("ba");
+        example.build();
+
+        System.out.println("Example: ababa");
+        example.printMatches("ababa");
+        System.out.println();
+
         int[] patternCounts = {10, 100, 1000};
         int[] textLengths = {1000, 10000, 100000};
 

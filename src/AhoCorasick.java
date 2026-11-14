@@ -77,4 +77,29 @@ public class AhoCorasick {
 
         return matches;
     }
+
+    public void printMatches(String text) {
+        Node current = root;
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            while (current != root
+                    && !current.children.containsKey(c)) {
+                current = current.fail;
+            }
+
+            if (current.children.containsKey(c)) {
+                current = current.children.get(c);
+            }
+
+            for (String pattern : current.output) {
+                int position = i - pattern.length() + 1;
+
+                System.out.println(
+                        pattern + " at position " + position
+                );
+            }
+        }
+    }
 }

@@ -1,95 +1,137 @@
-# Aho–Corasick Algorithm
+
+# Aho-Corasick Algorithm
 
 ## Project Description
 
-This Java project implements the Aho–Corasick algorithm to search for multiple patterns in a text. It also implements KMP to compare their search performance.
+This Java project implements the Aho-Corasick algorithm to search for multiple patterns in a text. It also implements KMP to compare their performance.
 
 ## Implementation
 
 The project contains three Java files:
 
-- `AhoCorasick.java` — builds a trie, creates failure links, stores matched patterns in output lists, and counts all pattern occurrences in the text.
-- `KMP.java` — searches for one pattern at a time using an LPS array.
-- `Main.java` — generates test data, runs both algorithms, checks that their match counts are equal, and measures execution time.
+- `AhoCorasick.java` - builds a Trie, creates failure links, stores matched patterns in output lists, counts all occurrences, and prints match positions.
+- `KMP.java` - searches for one pattern at a time using an LPS array.
+- `Main.java` - runs a simple test, generates test data, compares both algorithms, and measures execution time.
 
-### How Aho–Corasick Works
+### How Aho-Corasick Works
 
-1. **Trie:** stores all patterns together and shares common prefixes.
-2. **Failure links:** tell the algorithm where to continue after a mismatch without restarting from the beginning.
-3. **Output lists:** identify patterns that end at the current node, including patterns reached through failure links.
-4. **Search:** scans the text and counts all matches, including overlapping occurrences.
+1. **Trie:** Stores all patterns together and shares common prefixes.
+2. **Failure Links:** Help the algorithm continue searching after a mismatch.
+3. **Output Lists:** Store patterns that end at each node, including matches from failure links.
+4. **Search:** Reads the text character by character and finds all matches, including overlapping occurrences.
 
-The implementation reports the total number of matches rather than printing every match position.
+The `search()` method returns the total number of matches. The `printMatches()` method prints each matched pattern and its starting position.
+
+### Example Test
+
+Text: `ababa`
+
+Patterns: `aba`, `ba`
+
+```text
+Example: ababa
+aba at position 0
+ba at position 1
+aba at position 2
+ba at position 3
+```
+
+Positions start from 0. The example shows that the algorithm finds overlapping matches.
 
 ## Experiments
 
 The program tests:
 
-- **Number of patterns:** 10, 100, and 1,000.
-- **Text lengths:** 1,000, 10,000, and 100,000 characters.
-- **Pattern length:** 8 characters.
-- **Alphabet:** `a`, `b`, `c`, `d`.
-- **Runs per test case:** 5.
+- **Number of patterns:** 10, 100, 1000
+- **Text lengths:** 1000, 10000, 100000 characters
+- **Pattern length:** 8 characters
+- **Alphabet:** a, b, c, d
+- **Runs per test case:** 5
 
-Random data is generated using seed `42`. Execution time is measured with `System.nanoTime()` and reported as the average of five runs in milliseconds. A warm-up run is performed before measurement.
+Random data is generated using seed `42`.
 
-For Aho–Corasick, trie and failure-link construction happen before timing; the measured time covers searching only. For KMP, the measured time covers searching all patterns separately, including LPS construction inside each search call.
+Execution time is measured using `System.nanoTime()`. Each experiment is repeated 5 times, and the average execution time is calculated in milliseconds.
+
+A warm-up run is performed before measurement.
+
+For Aho-Corasick, Trie and failure-link construction are completed before timing. For KMP, the measured time includes searching for every pattern separately and building the LPS arrays.
+
+The example test is not included in the performance measurements.
 
 ## Experimental Results
 
-| Patterns | Text Length | Aho–Corasick (ms) | KMP (ms) |
+| Patterns | Text Length | Aho-Corasick (ms) | KMP (ms) |
 |---:|---:|---:|---:|
-| 10 | 1,000 | 0.193 | 0.992 |
-| 10 | 10,000 | 0.999 | 1.628 |
-| 10 | 100,000 | 2.382 | 7.487 |
-| 100 | 1,000 | 0.020 | 0.708 |
-| 100 | 10,000 | 0.229 | 6.732 |
-| 100 | 100,000 | 2.662 | 64.733 |
-| 1,000 | 1,000 | 0.051 | 5.677 |
-| 1,000 | 10,000 | 0.389 | 65.698 |
-| 1,000 | 100,000 | 3.001 | 627.207 |
+| 10 | 1000 | 1.259 | 0.971 |
+| 10 | 10000 | 1.917 | 1.808 |
+| 10 | 100000 | 2.335 | 7.934 |
+| 100 | 1000 | 0.018 | 0.707 |
+| 100 | 10000 | 0.216 | 7.176 |
+| 100 | 100000 | 3.202 | 77.894 |
+| 1000 | 1000 | 0.069 | 6.750 |
+| 1000 | 10000 | 0.516 | 66.913 |
+| 1000 | 100000 | 2.969 | 699.317 |
 
 ## Time and Space Complexity
 
-Let `n` be the text length, `m` the total length of all patterns, `k` the number of patterns, and `z` the number of matches.
+Let:
+- `n` = text length
+- `m` = total length of all patterns
+- `k` = number of patterns
+- `z` = number of matches
 
-**Aho–Corasick (standard algorithm with efficient transitions):**
+### Aho-Corasick
 
-- Trie construction: **O(m)**.
-- Failure-link construction: **O(m)** for a fixed alphabet and efficient transitions.
-- Searching: **O(n + z)**.
-- Space: **O(m)** for the trie and failure links, excluding stored match output.
+For the standard algorithm with efficient transitions:
 
-**Note about this implementation:** It uses `HashMap` transitions and copies failure-node output lists into child nodes. Therefore, its actual preprocessing and memory usage may be higher than the standard bounds, and search time also depends on failure-link traversals.
+- Trie construction: **O(m)**
+- Failure-link construction: **O(m)**
+- Searching: **O(n + z)**
+- Space: **O(m)**, excluding stored match output
 
-**KMP:**
+The Java implementation uses `HashMap` and copies output lists from failure nodes. This can increase preprocessing time and memory usage compared with the standard algorithm.
 
-- LPS construction for one pattern of length `p`: **O(p)**.
-- Search for one pattern: **O(n)**.
-- Search for all `k` patterns separately: **O(k × n + m)**.
-- Extra space per search: **O(p)**.
+### KMP
+
+- LPS construction: **O(p)**, where p is the pattern length
+- Searching one pattern: **O(n)**
+- Searching k patterns separately: **O(k * n + m)**
+- Extra space per search: **O(p)**
 
 ## Performance Comparison
 
-Aho–Corasick was faster than KMP in all nine measured cases. The difference became larger when the number of patterns increased.
+Aho-Corasick was faster than KMP in 7 out of 9 experiments.
 
-For 1,000 patterns and a text length of 100,000 characters:
+KMP was slightly faster in two tests with 10 patterns and text lengths of 1000 and 10000 characters.
 
-- Aho–Corasick: **3.001 ms**.
-- KMP: **627.207 ms**.
-- Aho–Corasick was approximately **209 times faster** in this experiment.
+When the number of patterns increased, Aho-Corasick showed much better performance.
 
-Aho–Corasick is useful when many patterns must be searched together. Its main advantages are shared prefixes and searching all patterns during one scan. Its limitations are additional preprocessing and memory usage.
+For 1000 patterns and 100000 characters:
 
-KMP is simpler and works well for one pattern. However, when searching many patterns, it must process the text separately for each one.
+- Aho-Corasick: **2.969 ms**
+- KMP: **699.317 ms**
 
-Small timing differences between test cases can be caused by JVM warm-up and other runtime effects.
+Aho-Corasick was approximately **236 times faster** in this experiment.
+
+Aho-Corasick is useful for searching many patterns because it stores them in one Trie and searches the text in one pass.
+
+Its advantages are fast multi-pattern searching and shared prefixes. Its limitations are preprocessing time and additional memory usage.
+
+KMP is simpler and works well for one pattern. However, it needs to search the text separately for each pattern.
+
+Small differences in execution time can happen because of JVM warm-up and other system processes.
+
+## Conclusion
+
+Aho-Corasick is a good algorithm for searching many patterns in one text.
+
+The experiments show that it is usually faster than running KMP separately for each pattern, especially when the number of patterns is large.
 
 ## How to Run
 
 1. Open the project in IntelliJ IDEA.
 2. Select JDK 17 or newer.
 3. Run `Main.java`.
-4. View the average execution times in the console.
+4. View the example matches and experimental results in the console.
 
 No external libraries are required.
